@@ -1,0 +1,22 @@
+﻿.search-popup {
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.search-popup-content {
+    color: black;
+    padding: 12px 16px;
+    cursor: pointer;
+}
+
+.search-popup-item {
+    padding: 8px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+    .search-popup-item:hover {
+        background-color: #ddd;
+    }

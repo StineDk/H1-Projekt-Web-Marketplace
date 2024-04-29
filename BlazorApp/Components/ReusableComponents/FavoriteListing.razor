@@ -1,0 +1,26 @@
+﻿@*Kalder på siden "Listing Games" for at opsætte produkterne på samme måde som på "ProductList".*@
+<Listing Games="favGames"></Listing>
+
+@code {
+    public List<Item> favGames = new List<Item>();
+
+    [Parameter]
+    public int userID { get; set; }
+
+    //Udføre denne funktion når siden bliver indlæst.
+    protected override void OnInitialized()
+    {   
+        //Bruger en database funktion til at få brugerens favorite liste, som består af "itemid". 
+        List<int> favorites = DB.GetFavoritesByUserID(userID);
+
+        //Loopede går igennem alle produkter i databasen og sammenligner "itemid" med de id'er der ligger på listen "favorites".
+        foreach ( var item in DB.allItems)
+        {
+            //Hvis favorites indeholder produktets "itemid", bliver produktet tilføjet til listen "favGames".
+            if (favorites.Contains(item.itemID))
+            {
+                favGames.Add(item);
+            }
+        }
+    }
+}

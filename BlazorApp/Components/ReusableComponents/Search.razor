@@ -1,0 +1,29 @@
+﻿<!-- Komponent til søgning af spil, der opdaterer visning baseret på søgetekst-->
+<input type="text" @bind-value="searchText" @oninput="ValueChanged" placeholder="Search games... "/>
+
+@code {
+    // Parameter for at modtage en liste over spilobjekter, der skal vises.
+    [Parameter]
+    public List<Item> gamesToShow { get; set; }
+
+    // Parameter for en callback, der aktiveres ved søgningens ændring for at informere forældrekomponenten.
+    // En callback er en funktion, der kaldes efter en anden funktion har fuldført en opgave.
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    // Parameter for at vise søgefeltet
+    [Parameter]
+    public bool showSearch { get; set; }
+
+    // Variabel til at gemme den aktuelle søgetekst.
+    [Parameter]
+    public string searchText { get; set; }
+
+    // Metode til at håndtere ændringer i søgefeltet
+    // Opdaterer søgeteksten og kalder OnSearch callback med den nye søgetekst
+    private async Task ValueChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value.ToString();
+        await OnSearch.InvokeAsync(searchText);
+    }
+}

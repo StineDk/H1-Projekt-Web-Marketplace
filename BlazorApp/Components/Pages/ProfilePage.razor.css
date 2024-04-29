@@ -1,0 +1,114 @@
+﻿.body {
+    min-height: 100vh;
+}
+
+.card{
+    background-color: #b3b3b3;
+    border-radius: 10px;
+}
+
+#colLeft{
+    display:flex;
+    max-width: 100%;
+}
+
+.ProfileContainer{
+    justify-content: left;
+}
+
+img {
+    border-radius: 50%;
+    max-width: 8rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ProfileDetails {
+    text-align: left;
+    line-height: 0.7;
+}
+
+.label {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.saveInfoBtn {
+    margin-top: 0.5rem;
+}
+
+.cancelInfoBtn{
+    margin-top: 0.5rem;
+}
+
+.deleteProfileBtn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.editProfileBtn {
+    margin-top: 0.1rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #000; /* Ændrer linjens farve */
+    width: 100%; /* Sørger for, at linjen strækker sig over hele bredden */
+    height: 3px; /* Ændrer linjens højde */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    padding: 20px;
+    border-radius: 10px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(112, 110, 111, 0.8);
+}
+
+.modal-content {
+    background-color: #b3b3b3;
+    z-index: 999;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #b3b3b3;
+    width: 80%;
+    max-width: 600px;
+}
+
+.warning {
+    font-weight: bold;
+    text-decoration: underline;
+    font-size: 25px;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#buttonContainer .btn {
+    margin: 0 5px;
+}
+
+.ListedSalesContaier {
+    text-align: right;
+}
+
+.Displaygrid {
+    display: grid;
+    min-width: auto;
+    max-height: 1rem !important;
+}
+
+.btn {
+    margin-bottom: 1rem;
+}

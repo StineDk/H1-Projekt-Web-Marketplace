@@ -1,0 +1,119 @@
+﻿<div class="section">
+	<h2 class="text">Featured</h2>
+	<p class="text">Explore our current list of trending games.</p>
+	<div class="card-container">
+		@*Produkt kort til PC spil.*@
+		<div class="card-bottom-section">
+			<div class="carousel">
+				@*Køre for loopede igennem og fremviser alle PC spil der er gemt i Databasen.*@
+				@for (var i = 0; i < pcGamesToShow.Count; i++)
+				{
+					var path = $"/Picture/{imagesPC[i]}";
+					var localIndex = i;
+					<div class="carousel-item @(currentIndexPC == i ? "active" : "")">
+						<div class="card-body-bottom" @onclick="@( () => HandleCardClick(pcGamesToShow[localIndex].itemID))">
+							<h4>PC</h4>
+							<img src="@path" alt="image @i" class="image"/>
+							<h4 class="game-name">@pcGamesToShow[localIndex].gameName</h4>
+							<p class="game-genre">@pcGamesToShow[localIndex].genre</p>
+							<p class="game-price">€ @pcGamesToShow[localIndex].price</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		@*Produkt kort til PS spil.*@
+		<div class="card-bottom-section">
+			<div class="carousel">
+				@*Køre for loopede igennem og fremviser alle PS spil der er gemt i Databasen.*@
+				@for (var i = 0; i < psGamesToShow.Count; i++)
+				{
+					var path = $"/Picture/{imagesPS[i]}";
+					var localIndex = i;
+					<div class="carousel-item @(currentIndexPS == i ? "active" : "")">
+						<div class="card-body-bottom" @onclick="@( () => HandleCardClick(psGamesToShow[localIndex].itemID))">
+							<h4>PS</h4>
+							<img src="@path" class="image" />
+							<h4 class="game-name">@psGamesToShow[localIndex].gameName</h4>
+							<p class="game-genre">@psGamesToShow[localIndex].genre</p>
+							<p class="game-price">€ @psGamesToShow[localIndex].price</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		@*Produkt kort til XBOX spil.*@
+		<div class="card-bottom-section">
+			<div class="carousel">
+				@*Køre for loopede igennem og fremviser alle XBOX spil der er gemt i Databasen.*@
+				@for (var i = 0; i < xboxGamesToShow.Count; i++)
+				{
+					var path = $"/Picture/{imagesXBOX[i]}";
+					var localIndex = i;
+					<div class="carousel-item @(currentIndexXBOX == i ? "active" : "")">
+						<div class="card-body-bottom" @onclick="@( () => HandleCardClick(xboxGamesToShow[localIndex].itemID))">
+							<h4>XBOX</h4>
+							<img src="@path" class="image" />
+							<h4 class="game-name">@xboxGamesToShow[localIndex].gameName</h4>
+							<p class="game-genre">@xboxGamesToShow[localIndex].genre</p>
+							<p class="game-price">€ @xboxGamesToShow[localIndex].price</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	//De lister der skal importeres ind i filen, når den bliver kaldt på.
+	[Parameter]
+	public List<Item> pcGamesToShow { get; set; }
+	[Parameter]
+	public List<Item> xboxGamesToShow { get; set; }
+	[Parameter]
+	public List<Item> psGamesToShow { get; set; }
+
+	//Arrays af det indeholder navn på billederne der passer til deres kategori.
+	private string[] imagesPC = new string[] { "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg", "PC_1.jpg", "PC_2.jpg" };
+	private string[] imagesPS = new string[] { "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp", "PS_1.jpg", "PS_2.webp" };
+	private string[] imagesXBOX = new string[] { "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg", "XBOX_1.jpg", "XBOX_2.jpg"};
+
+	public int currentIndexPC = 0;
+	public int currentIndexPS = 0;
+	public int currentIndexXBOX = 0;
+
+	//Laver en variable der håndter tid.
+	private System.Timers.Timer timer;
+
+	//En funktion der køre ligeså snart det siden bliver loaded.
+	protected override void OnInitialized()
+	{
+		//Håndter tiden for funktionen "TimerElapsed()".
+		timer = new System.Timers.Timer(8000);
+		timer.Elapsed += TimerElapsed;
+		timer.Start();
+	}
+
+	//Håndtere navigationen af @onclick på produkt kortet.
+	private void HandleCardClick(int gameID)
+	{
+		NavigationManager.NavigateTo($"/product/{gameID}");
+	}
+
+	//Indeholder hvad der skal ske når tiden er gået.
+	private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+	{
+		NextGame();
+		//Blazors auto refresh a siden
+		InvokeAsync(StateHasChanged);
+	}
+
+	//Funktionen indeholder logikken, for at gå til næste billede, når det er tid til der bliver skiftet produkt.
+	private void NextGame()
+	{
+		currentIndexPC = (currentIndexPC + 1) % pcGamesToShow.Count;
+		currentIndexPS = (currentIndexPS + 1) % psGamesToShow.Count;
+		currentIndexXBOX = (currentIndexXBOX + 1) % xboxGamesToShow.Count;
+	}
+}

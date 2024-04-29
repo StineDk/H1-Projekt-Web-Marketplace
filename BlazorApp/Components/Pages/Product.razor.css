@@ -1,0 +1,168 @@
+﻿.body {
+    min-height: 100vh;
+}
+
+.location {
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.map {
+    margin-right: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+}
+
+.container .row:first-child {
+    box-shadow: 5px 5px;
+    background-color: #b3b3b3;
+    border-radius: 10px;
+}
+
+.col {
+    position: relative;
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    text-align: center; /* Ensure text is centered */
+    
+}
+
+.col .gameTitle {
+    text-align: left;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    max-width: 50rem;
+}
+
+
+.col .genre {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.col .description {
+    text-align: left;
+}
+
+.col .Delete {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.col .priceTag {
+    text-align: left;
+
+}
+
+.priceColor {
+    background: #9F24FF;
+    background: linear-gradient(to right, #9F24FF 0%, #009EFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.col .btn-dark {
+    position: relative;
+    float: left;
+    height: 4rem;
+    width: 10rem;
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+}
+
+.button_container button {
+    background-color: #b3b3b3;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.favoriteStar {
+    position: relative;
+    margin-top: 1.0%;
+    filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5));
+    z-index: 0;
+}
+
+.favoriteStarText {
+    position: relative;
+    margin-top: 1.0%;
+    text-align: center; 
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    width: 100%; 
+    padding: 0 10px; 
+}
+
+.col .btn-dark:hover {
+    opacity: 70%;
+}
+
+
+.container .row:nth-child(2) {
+    background-color: #b3b3b3;
+    margin-top: 2rem;
+    box-shadow: 5px 5px;
+    border-radius: 10px;
+}
+
+.col .details {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.col .conditionDetails {
+    text-align: left;
+    margin-bottom: 0px;
+}
+
+.col .genreDetails {
+    text-align: left;
+    margin-bottom: 0px;
+}
+
+.col .manufactureDetails {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.details{
+    margin-top: 5%;
+    margin-bottom: 5%;
+    text-align: left;
+    
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    padding: 20px;
+    border-radius: 10px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(112, 110, 111, 0.8);
+}
+
+/* Stil for modalinnhold */
+.modal-content {
+    background-color: #b3b3b3;
+    z-index: 999;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #b3b3b3;
+    width: 80%;
+    max-width: 600px;
+}

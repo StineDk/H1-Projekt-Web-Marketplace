@@ -1,0 +1,281 @@
+﻿@using Service
+@inject AuthenticationService AuthenticationService
+@inject IJSRuntime JSRuntime
+
+@page "/profilepage/{userID}"
+
+<PageTitle>Gamers Lounge: Profile Page</PageTitle>
+
+<div class="body">
+    <div class="card">
+        <div class="container text-center">
+            <div class="row">
+                @* Kolonne til profilbillede og detaljer*@
+                <div class="col" id="colLeft">
+                    <div class="ProfileContainer">
+                        <img src="./Picture/img_avatar.png" alt="Avatar">
+                            <div class="ProfileDetails">
+                                @*hvis rediger profíl kanppen er trykket*@
+                            @if (editProfileinfo == true)
+                            {
+                                <label class="label">Name:</label>
+                                <input type="text" class="form-control" id="name" placeholder="@userToShow.name" @bind="updatedName">
+                                <label class="label">Email:</label>
+                                <input type="email" class="form-control" id="Email" placeholder="@userToShow.email" @bind="updatedEmail">
+                                <label class="label">Password:</label>
+                                <input type="text" class="form-control" id="City" placeholder="@userToShow.password" @bind="updatedPassword">
+                                <label class="label">Phone number:</label>
+                                <input type="tel" class="form-control" id="PhoneNumber" placeholder="@userToShow.phoneNumber" @bind="updatedPhoneNumber">
+                                <label class="label">City:</label>
+                                <input type="text" class="form-control" id="City" placeholder="@userToShow.city" @bind="updatedCity">
+                                <button class="btn btn-dark saveInfoBtn" @onclick="saveInfo">Save information</button>
+                                <button class="btn btn-dark cancelInfoBtn" @onclick="cancelsaveInfo">Cancel</button>
+                            }
+                            @*Ellers skal der bare vises Brugerens oplysninger og knapper til at redigere profilen*@
+                            else{
+                                
+                                <p>Name: @userToShow.name </p>
+                                <p>Phone number: @userToShow.phoneNumber</p>
+                                <p>Email: @userToShow.email</p>
+                                <p>City: @userToShow.city</p>
+                                @*redigere profil knappen skal kun vises hvis brugeren er logget ind*@
+                                @if (AuthenticationService.IsAuthenticated)
+                                {
+                                    <button class="btn btn-dark editProfileBtn" @onclick="editProfile">Edit Profile</button>
+                                }
+                            }
+
+                            </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="col-2">
+                </div>
+                <div class="col">
+                    @*Hvis knappen rediger profil er trykket på skal deleteProfile knappen vises*@
+                    @if (editProfileinfo == true)
+                    {
+                        <button class="btn btn-danger deleteProfileBtn" @onclick="deleteConfirmationModal">Delete profile and all user infomation</button>
+                        @*Hvis knappen deleteProfile er trykket på vises der en modal der bekræfter om man vil slette profilen*@
+                        @if (deleteConfirmation == true)
+                        {
+                            <div class="modal" tabindex="-1" style="display:block;">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm your choice</h5>
+
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you wish to delete your profile and all of your information?</p>
+                                            <p class="warning"> WARNING:</p>
+                                            <p class="warning">You will NOT be able to undo your decision!</p>
+                                            <div id="buttonContainer">
+                                                <button type="button" id="yesbtn" class="btn btn-danger" @onclick="DeleteUserAndItsItems">Yes</button>
+                                                <button type="button" id="Listed" class="btn btn-dark" @onclick="closeDeleteConfirmationModal">No</button>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" @onclick="closeDeleteConfirmationModal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            <hr> <!-- Horisontal linje under knappen -->
+
+            <div class="row">
+                <div class="col">
+
+                </div>
+                <div class="col-8">
+                    @*Hvis man er logget ind vises knapperne*@
+                    @if (AuthenticationService.IsAuthenticated)
+                    {
+                        <button class="btn btn-dark" @onclick="expandListin">See your listings here</button>
+                        <button class="btn btn-dark" @onclick="expandFavListin">See your favorites here</button>
+                    }
+
+                    @*Hvis see your listings knappen er trykket på vises der en liste med brugerens opslag*@
+                    @if (Listexpandable == true)
+                    {
+                        <Listing Games="itemsForUserToShow"></Listing>
+                    }
+                    @*Hvis see your favorites knappen er trykket på vises der en liste med brugerens favorit opslag*@
+                    @if (favlistexpandable == true)
+                    {
+                        <FavoriteListing userID="userToShow.userID"></FavoriteListing>
+                    }
+                </div>
+                <div class="col">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    //Gemmer userToShow oplysingerne med strukturen for klaseen User
+    public User userToShow;
+
+    //henter parameterne for userID
+    [Parameter]
+    public string userID { get; set; }
+
+    //Lister med items for brugeren der skal vises
+    public List<Item> itemsForUserToShow;
+
+    //Bools til at udvide de 2 lister med
+    bool Listexpandable = false;
+    bool favlistexpandable = false;
+
+    //bool til at aktiver redigerprofil
+    bool editProfileinfo = false;
+
+    //bool til at modal for at bekræfte sletning af profilen
+    bool deleteConfirmation = false;
+
+    //Variabler til at gemme oplysningerne hvis man redigere sin profil oplysninger
+    public string updatedName;
+    public string updatedPhoneNumber;
+    public string updatedEmail;
+    public string updatedCity;
+    public string updatedPassword;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //forsøger at konvertere udserID string fra url til en int data type
+        try
+        {
+            int parsedUserID;
+            //hvis det lykkes at konverterer til int
+            if (int.TryParse(userID, out parsedUserID))
+            {
+                //henter vi brugeren og dens salgs lister Den bruger den koverteret UserID til at tjekke om det er den korrekter bruger i databasen
+                userToShow = DB.GetAllUser().FirstOrDefault(user => user.userID == parsedUserID);
+                itemsForUserToShow = DB.GetListedSalesForUser(parsedUserID);
+            }
+            else
+            {
+                //fejl meddelse i Consollen hvis konverteringen fejler
+                Console.WriteLine("Failed to convert UserID string to an int");
+            }
+        }
+        catch (Exception ex)
+        {
+            //fejl meddelse i Consollen hvis konverteringen fejler
+            Console.WriteLine("Failed to convert UserID string to an int");
+        }
+    }   
+
+    //Metode til at udvide brugens salgsopslag
+    public void expandListin()
+    {
+        //her udvider vi listen for brugerensoplsag og lukker den anden liste samt lukker funktion til at redigere profilen
+        if (Listexpandable == false)
+        {
+            Listexpandable = true;
+            favlistexpandable = false;
+            editProfileinfo = false;
+
+        }
+        else
+        {
+            Listexpandable = false;
+        }
+    }
+
+    // Metode til at udvide listen over brugerens favoritter
+    public void expandFavListin()
+    {
+        //her udvider vi listen for Favoritter og lukker den anden liste samt lukker funktion til at redigere profilen
+        if (favlistexpandable == false)
+        {
+            favlistexpandable = true;
+            Listexpandable = false;
+            editProfileinfo = false;
+        }
+        else
+        {
+            favlistexpandable = false;
+        }
+    }
+
+    //her åbner vi muligheden for at rediger profiler og lukker de 2 andre lister hvis de står åben
+    public void editProfile()
+    {
+        if (editProfileinfo == false)
+        {
+            editProfileinfo = true;
+            Listexpandable = false;
+            favlistexpandable = false;
+        }
+    }
+
+    //Metode til at gemme oplysningerne hvis man har ændret sine profil oplysningerne
+    public async void saveInfo()
+    {
+
+        try
+        {
+            // Opdater brugerens information i databasen
+            DB.UpdateUserInDatabase(userToShow.userID, updatedName, updatedEmail, updatedPassword, updatedPhoneNumber, updatedCity);
+
+            // Opdater brugerens information i komponenten
+            userToShow.name = updatedName;
+            userToShow.phoneNumber = updatedPhoneNumber;
+            userToShow.email = updatedEmail;
+            userToShow.city = updatedCity;
+
+            //Lukker muligheden for at ændre i profilen igen efter oplysningerne er gemt
+            editProfileinfo = false;
+        }
+        //Hvis det fejler viser den en browser alert
+        catch
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "You need to fill out all the fields again!");
+        }
+
+    }
+
+    //Lukker muligheden for at ændre i profilen igen efter oplysningerne er gemt
+    public void cancelsaveInfo()
+    {
+        editProfileinfo = false;
+    }
+
+    //åbner modal for bekræftelse af profil sletningen
+    public void deleteConfirmationModal()
+    {
+        deleteConfirmation = true;
+    }
+
+    //Lukker modal for bekræftelse af profil sletningen
+    public void closeDeleteConfirmationModal()
+    {
+        deleteConfirmation = false;
+    }
+
+    //Metode til at slette brugeren og dens oplysninger samt opslag of favoritter
+    public async Task DeleteUserAndItsItems()
+    {
+        //sletter bruger i database
+        DB.DeleteUserAndItsItems(userToShow.userID);
+
+        //logger Brugeren ud
+        AuthenticationService.Logout();
+        //navigere til login siden
+        NavigationManager.NavigateTo("/login");
+    }
+
+
+   
+}

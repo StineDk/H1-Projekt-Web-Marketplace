@@ -1,0 +1,244 @@
+﻿@page "/product/{itemID}"
+@inject IJSRuntime JSRuntime
+@using Service
+@inject AuthenticationService AuthenticationService
+@using System.Text.Json
+
+<PageTitle>Gamers lounge: @gameToShow.gameName</PageTitle>
+
+<div class="body">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                <GallerySlider type="@gameToShow.type"></GallerySlider>
+            </div>
+            <div class="col">
+                <h1 class="gameTitle"><b>@gameToShow.gameName</b></h1>
+                <h5 class="genre"><b>Genre: </b>@gameToShow.genre </h5>
+                <h5 class="description"><b>Description:</b></h5>
+                <p class="description">@gameToShow.description</p>
+            </div>
+            <div class="col">
+                @*Hvis det er brugens eget opslag vises Skraldespanden*@
+                @if (gameToShow.userID.ToString() == CurrentUserID)
+                {
+                                    <button class="Delete" @onclick="DeleteGame">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 16 16" class="bi bi-trash">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="48%" style="stop-color:rgb(159,36,255);stop-opacity:1" />
+                                <stop offset="56%" style="stop-color:rgb(0,158,255);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#gradient)" d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                        <path fill="url(#gradient)" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                    </svg>
+                </button>
+                }
+
+                <h3 class="priceTag">Price: <b class="priceColor">@gameToShow.price € </b></h3>
+                <button type="button" class="btn btn-dark" @onclick="ShowPopup"><b>Contact seller</b></button>
+                <div class="button_container">
+                    @*Hvis Brugeren er logget ind*@
+                    @if (AuthenticationService.IsAuthenticated)
+                    {
+                        <button @onclick="() => AddToFavorites(gameToShow)">
+						    <img class="favoriteStar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACu0lEQVR4nO2ZS2sTURTHr28FRUSoC4ViMHPOxLYqRUVcuPEruNKFKPgV+gHEKoiCC4WCILhoaXzW+t50Ydvk3MRdVXBRF924sCAIvmrzl5m0SYa8JnHuZEbyh7OcM7//OfdO7rlRqquuujImCB9zQsVV0PwCws9VHIUsD0K4AM1ALnlExU3Q9NSFd4MmVZwEbR8qVb8U1mEVF0F4wgvPgPBjFQdBUgerq+8aKDj7QkVd0PSwCr5kgh6oKAti74fwcn0DXEDGGlBRFTSn68KXY1xFUcimUg2rX+7CMvLUr6ImCI35qP7qXhhVURIySdtX9Su7oLmvM7AziR7krOMQOgvhSyvr/pNv+HI4z6TdHE4uJ+dMoicYyDf9O4pnGToF4SEIj0B4GsJf2wBtNX5A07tiYegKNF+Atk9CJxPNwYWGoWkxBMg2gxYdxvoGPu7bBOEnnQflevESs3u2NO7CXGojND2KACw8IfQMU72b/e2B/OAGCN+P0NKZdFaHL/iSibRaB6G7nYfncaegLcF7TGi+08FlM4qpE+vbgi+ZgFoDoZsdWDa3AbX2n+A9JjTfCK/yPBIYvMeE0PUQDNxy3hUovMeI5osGK3/VGHjbJ0//G3YsFPiiAb5noAPpMA18MGDgfTjwznlJ01LwBmip5V/btq9NTG3ibPKAeQPaOmPuK0SnQzBAlw0aGDZvwOS8IDxh3oDmeZ9AC8Vx0I0Fn8/Mm4WfS22tee/p/Zp8cefoismpOCQ5Ruhzkw4UME3bzBnI20cbrN9v7hCeT2xvUoChhpcDOYN/hiBrn68B/ss9PWb6dvnOI7xz5cbhe40OnjNnoPI0KvTbndiy1t62880md7vHdOGfFQauBUtd+UKh1yt7II2MnQws71u71+2i5j/Q9CqovNUvcpeKuetxZKwB5x2m8nfV1f+ov0WA2bF0AkOGAAAAAElFTkSuQmCC">
+                        </button>
+                        <h5 class="favoriteStarText"><b>Favorite this item!</b></h5>
+                    }
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="gameDetails">
+                    <h5 class="details"><b>Details:</b></h5>
+                    <p class="conditionDetails"><b>Condition: </b>@gameToShow.condition</p>
+                    <p class="genreDetails"><b>Genre: </b>@gameToShow.genre</p>
+                    <p class="manufactureDetails"><b>Manufacture: </b>@gameToShow.manufacture</p>
+                </div>
+            </div>
+            <div class="col">
+
+            </div>
+            <div class="col">
+                <div class="sellerLocation">
+                    <h5 class="location">Location:</h5>
+                    @*Mappet vises med iframe tagget parameter for højde og bredde skal defineres og src er api keyen*@
+                    <iframe class="map" width="400" height="300" src="@mapUrl"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Hvis knappen Contact seller bliver trykket på vises modal med sellerdetails*@
+    @if (ShowModal == true)
+    {
+        <div class="modal" tabindex="-1" style="display:block;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Seller:</h5>
+
+                    </div>
+                    <div class="modal-body">
+                        <SellerDetails userID="gameToShow.userID"></SellerDetails>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" @onclick="CloseModal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Gemmer ID'en for den nuværende bruger
+    public string CurrentUserID { get; set; }
+    //liste til brugerens favoritter
+    public List<int> favoriteGames = new List<int>();
+    bool ShowModal = false;
+
+    // Gemmer det spilobjekt, der skal vises
+    public Item gameToShow;
+
+    //paramenter for at modtage itemID
+    [Parameter]
+    public string itemID { get; set; }
+
+    //Mapurl /API
+    public string mapUrl = $"https://api.maptiler.com/maps/basic-v2/?key=i6USPWEOkGRsTGhqqqrb#13.0/0/0";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Henter den nuværende brugerens ID fra AuthenticationService dette ID bruges til at identificere den bruger, der er logget ind
+        CurrentUserID = AuthenticationService.CurrentUserID;
+
+        //gennemgår alle spil i databasen
+        foreach (var item in DB.allItems)
+        {
+            //hvis id'et i url stemmer ovens med itemid i databasen gemmer vi det i en variabel gameToShow
+            if (item.itemID == Int32.Parse(itemID))
+            {
+                gameToShow = item;
+            }
+        }
+
+        var sellerDetails = DB.GetSellerDetailsFromUsers(gameToShow.userID).FirstOrDefault()?.city;
+        await UpdateMap(sellerDetails);
+    }
+
+    // Tilføjer et spil til brugerens favoritter eller fjerner det, hvis det allerede er tilføjet
+    private async Task AddToFavorites(Item game)
+    {
+        //Her henter man brugeren favorite liste fra databasen
+        favoriteGames = (DB.GetFavoritesByUserID(AuthenticationService.CurrentUser.userID));
+        //Hvis spillet ikke er i listen
+        if (!favoriteGames.Contains(game.itemID))
+        {
+            //Tilføj spillet til listen
+            favoriteGames.Add(game.itemID);
+            //Browser alert, der fortæller at spillet bliver tilføjet ti listen
+            await JSRuntime.InvokeVoidAsync("alert", $"{game.gameName}, will be added to your favorites list.");
+            //opdatere brugerens liste i databasen
+            DB.AddItemToFavoriteInUsers(AuthenticationService.CurrentUser.userID, game.itemID);
+        }
+        //Ellers
+        else
+        {
+            //Browser alert, der fortæller at spillet allerede er i listen og vil blive fjernet.
+            await JSRuntime.InvokeVoidAsync("alert", $"{game.gameName}, is already on your favorites list, and will be deleted. If you do not wish to remove it from your favorites list, press the star again.");
+            //Fjerner spillet fra brugerens liste i databasen
+            DB.DeleteItemFromFavorites(AuthenticationService.CurrentUser.userID, game.itemID);
+        }
+    }
+
+    //Sletter det valgte spil fra databasen
+    void DeleteGame()
+    {
+        DB.DeleteItem(gameToShow.itemID);
+        NavigationManager.NavigateTo($"/profilepage/{CurrentUserID}");
+    }
+
+    //viser og lukker contact seller popup
+    void ShowPopup()
+    {
+        ShowModal = true;
+    }
+
+    void CloseModal()
+    {
+        ShowModal = false;
+    }
+
+    // Opdaterer kortet baseret på en adresse
+    public async Task UpdateMap(string address)
+    {
+        // Konstruerer URL'en til geocoding-tjenesten ved at inkludere adressen og API-nøglen
+        string geocodingUrl = $"https://api.maptiler.com/geocoding/{Uri.EscapeDataString(address)}.json?proximity=ip&autocomplete=false&fuzzyMatch=true&key=i6USPWEOkGRsTGhqqqrb";
+
+        // Opretter en HttpClient for at sende en HTTP-anmodningen
+        using (HttpClient client = new HttpClient())
+        {
+            // Udfører GET-anmodningen til geocoding-tjenesten
+            HttpResponseMessage response = await client.GetAsync(geocodingUrl);
+
+            // Kontrollerer, om anmodningen var succesfuld
+            if (response.IsSuccessStatusCode)
+            {
+                // Læser svaret som en streng
+                string json = await response.Content.ReadAsStringAsync();
+
+                // Parser JSON-svaret til et JsonDocument for at lette navigering og adgang til data
+                using (JsonDocument document = JsonDocument.Parse(json))
+                {
+                    // Henter root-elementet fra JSON-svaret
+                    JsonElement root = document.RootElement;
+
+                    // Prøver at finde "features"-arrayet i JSON-svaret
+                    if (root.TryGetProperty("features", out JsonElement featuresElement) && featuresElement.ValueKind == JsonValueKind.Array)
+                    {
+                        // Itererer over hvert element i "features"-arrayet
+                        foreach (JsonElement featureElement in featuresElement.EnumerateArray())
+                        {
+                            // Prøver at finde "geometry"-objektet og "coordinates"-arrayet indeni
+                            if (featureElement.TryGetProperty("geometry", out JsonElement geometryElement) && geometryElement.TryGetProperty("coordinates", out JsonElement coordinatesElement))
+                            {
+                                // Henter længde- og breddegrader fra "coordinates"-arrayet
+                                double longitude = coordinatesElement[0].GetDouble();
+                                double latitude = coordinatesElement[1].GetDouble();
+
+                                // Opdaterer mapUrl med de nye koordinater
+                                mapUrl = $"https://api.maptiler.com/maps/basic-v2/?key=i6USPWEOkGRsTGhqqqrb#13.0/{latitude.ToString().Replace(',', '.')}/{longitude.ToString().Replace(',', '.')}";
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Hvis anmodningen ikke var succesfuld, læser vi svarets indhold for at finde fejlbeskrivelsen
+                string errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(errorContent);
+            }
+        }
+    }
+
+    // Klasser til at konvertere geocoding-resultatet til objekter
+    public class GeocodingResult
+    {
+        public List<Feature> Features { get; set; }
+    }
+
+    public class Feature
+    {
+        public List<double> Center { get; set; }
+    }
+}

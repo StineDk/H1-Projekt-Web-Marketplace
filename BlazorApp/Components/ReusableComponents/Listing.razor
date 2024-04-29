@@ -1,0 +1,93 @@
+﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using Service
+@inject AuthenticationService AuthenticationService
+
+<!-- En div til at håndtere spillende, viser spillende i et grid format -->
+<div class="game-grid">
+    <!-- Looper igennem alle spillende -->
+    @foreach (var game in Games)
+    {
+        <!-- Opretter en række i gridet for hvert spil, som kan klikkes på og derved navigerer til spillets side -->
+        <div class="row" style="cursor: pointer;" @onclick="() => NavigateToProduct(game.itemID)">
+            <div class="col-1">
+
+                <!-- Tjekker efter spil typen, laver forskellige billeder baseret på typen af spil-->
+                @if (game.type == "PC")
+                {
+                    <div class="image-container">
+                        <img src="/Picture/PC_1.jpg" class="img-fluid game-image" alt="Game Image">
+                    <p class="game-condition"><b>@game.condition</b></p>
+
+                    </div>
+                }
+                else if (game.type == "PS")
+                {
+                    <div class="image-container">
+                        <img src="/Picture/PS_1.jpg" class="img-fluid game-image" alt="Game Image">
+                    <p class="game-condition"><b>@game.condition</b></p>
+
+                    </div>
+                }else if (game.type == "XBOX")
+                {
+                    <div class="image-container">
+                        <img src="/Picture/XBOX_1.jpg" class="img-fluid game-image" alt="Game Image">
+                    <p class="game-condition"><b>@game.condition</b></p>
+
+                    </div>
+                }
+                <!-- Tilføjer en knap som tilføjer spillet til favoritter -->
+                @if (AuthenticationService.IsAuthenticated)
+                {
+                <button @onclick="() => AddToFavorites(game)">
+                    <img class="favoriteStar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACu0lEQVR4nO2ZS2sTURTHr28FRUSoC4ViMHPOxLYqRUVcuPEruNKFKPgV+gHEKoiCC4WCILhoaXzW+t50Ydvk3MRdVXBRF924sCAIvmrzl5m0SYa8JnHuZEbyh7OcM7//OfdO7rlRqquuujImCB9zQsVV0PwCws9VHIUsD0K4AM1ALnlExU3Q9NSFd4MmVZwEbR8qVb8U1mEVF0F4wgvPgPBjFQdBUgerq+8aKDj7QkVd0PSwCr5kgh6oKAti74fwcn0DXEDGGlBRFTSn68KXY1xFUcimUg2rX+7CMvLUr6ImCI35qP7qXhhVURIySdtX9Su7oLmvM7AziR7krOMQOgvhSyvr/pNv+HI4z6TdHE4uJ+dMoicYyDf9O4pnGToF4SEIj0B4GsJf2wBtNX5A07tiYegKNF+Atk9CJxPNwYWGoWkxBMg2gxYdxvoGPu7bBOEnnQflevESs3u2NO7CXGojND2KACw8IfQMU72b/e2B/OAGCN+P0NKZdFaHL/iSibRaB6G7nYfncaegLcF7TGi+08FlM4qpE+vbgi+ZgFoDoZsdWDa3AbX2n+A9JjTfCK/yPBIYvMeE0PUQDNxy3hUovMeI5osGK3/VGHjbJ0//G3YsFPiiAb5noAPpMA18MGDgfTjwznlJ01LwBmip5V/btq9NTG3ibPKAeQPaOmPuK0SnQzBAlw0aGDZvwOS8IDxh3oDmeZ9AC8Vx0I0Fn8/Mm4WfS22tee/p/Zp8cefoismpOCQ5Ruhzkw4UME3bzBnI20cbrN9v7hCeT2xvUoChhpcDOYN/hiBrn68B/ss9PWb6dvnOI7xz5cbhe40OnjNnoPI0KvTbndiy1t62880md7vHdOGfFQauBUtd+UKh1yt7II2MnQws71u71+2i5j/Q9CqovNUvcpeKuetxZKwB5x2m8nfV1f+ov0WA2bF0AkOGAAAAAElFTkSuQmCC">
+                </button>
+                }
+            </div>
+            <div class="col-8">
+                <!-- Data som bliver vist for hvert spil -->
+                <p class="game-title">@game.gameName</p>
+                <p class="game-created"><b>Created:</b> @game.created</p>
+                <p class="game-genre"><b>Genre:</b> @game.genre</p>
+                <p class="game-manufacture"><b>Manufacture:</b> @game.manufacture</p>
+                <p class="game-description">@game.description</p>
+            </div>
+            <div class="col-2">
+                <!-- Viser prisen -->
+                <p class="game-price text-right"><b>@game.price €</b></p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Parameter for at modtage en liste over spilobjekter
+    [Parameter]
+    public List<Item> Games { get; set; }
+
+    // Liste til at gemme ID'er for favoritspil
+    public List<int> favoriteGames = new List<int>();
+
+    // Metode til at navigere til produktsiden for et bestemt spil ved klik
+    private void NavigateToProduct(int itemId)
+    {
+        NavigationManager.NavigateTo($"./product/{itemId}");
+    }
+
+    // Metode til at tilføje spil til favoritter, og tjekker efter om spillet
+    // allerede er tilføjet
+    private async Task AddToFavorites(Item game)
+    {
+        favoriteGames = (DB.GetFavoritesByUserID(AuthenticationService.CurrentUser.userID));
+        if (!favoriteGames.Contains(game.itemID))
+        {
+            favoriteGames.Add(game.itemID);
+            await JSRuntime.InvokeVoidAsync("alert", $"{game.gameName}, will be added to your favorites list.");
+            DB.AddItemToFavoriteInUsers(AuthenticationService.CurrentUser.userID, game.itemID);
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"{game.gameName}, is already on your favorites list. Go to product if you wish to delete from your list.");
+        }
+    }
+}

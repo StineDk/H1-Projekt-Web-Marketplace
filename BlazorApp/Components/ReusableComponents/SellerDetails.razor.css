@@ -1,0 +1,30 @@
+﻿
+
+.col .sellerDetailsContainer {
+    margin-top: 5.6%;
+    text-align: left;
+}
+
+.col .sellerDetails{
+   
+}
+
+.col .name{
+    margin-bottom: 0px;
+}
+
+.col .location {
+    margin-bottom: 0px;
+}
+
+.col .itemsold {
+    margin-bottom: 0px;
+}
+
+.compact-p {
+    margin-bottom: 0.2rem !important;
+}
+
+p {
+    margin-bottom: 0.2rem !important;
+}

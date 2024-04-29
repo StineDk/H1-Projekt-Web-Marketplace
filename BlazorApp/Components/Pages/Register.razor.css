@@ -1,0 +1,22 @@
+﻿.body {
+    min-height: 100vh;
+}
+
+.card{
+    background-color: #b3b3b3;
+    
+}
+
+.main {
+    min-height: 100vh;
+}
+
+.gradient-custom-4 {
+    /* fallback for old browsers */
+    background: #c790ff; /* Lilla farve som fallback */
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(199, 144, 255, 1), rgba(143, 211, 244, 1));
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(199, 144, 255, 1), rgba(143, 211, 244, 1));
+}
+

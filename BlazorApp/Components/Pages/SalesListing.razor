@@ -1,0 +1,317 @@
+﻿@page "/SalesListing"
+@using Microsoft.Extensions.Configuration
+@using Service;
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Web
+@inject IJSRuntime JSRuntime
+@using Service
+@inject AuthenticationService AuthenticationService
+
+
+<PageTitle>Gamers Lounge: Create New Sales</PageTitle>
+
+@*Hvis Brugeren er logget ind vises sagerene til at oprette et opslag*@
+@if (AuthenticationService.IsAuthenticated){
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <form>
+                            <div class="select-container">
+                                <p>Platform</p>
+                                <select class="form-select Type" aria-label="Default select example" @bind="platform">
+                                    <option selected></option>
+                                    <option value="PC">PC</option>
+                                    <option value="PS">PS</option>
+                                    <option value="Xbox">Xbox</option>
+                                </select>
+                            </div>
+                        @*Hvis der er valgt PC som platform*@
+                        @if (platform == "PC")
+                        {
+                    
+                                <div class="mb-3 gameTitle">
+                                    <label for="exampleInputGametitle" class="form-label">Game Title *</label>
+                                    <input type="text" class="form-control" id="GameTitleInput" @bind="pcGameToBeCreated.gameName" required>
+                                </div>
+                                <div class="mb-3 priceTag">
+                                    <label for="exampleInputPrice" class="form-label">Price *</label>
+                                    <input type="number" class="form-control" id="PriceInput" @bind="pcGameToBeCreated.price" required>
+                                </div>
+                                <div class="mb-3 Manufacture">
+                                    <label for="exampleInputManufacture" class="form-label">Manufacture</label>
+                                    <input type="text" class="form-control" id="ManufactureInput" @bind="pcGameToBeCreated.manufacture">
+                                </div>
+                                <p>Genre</p>
+                                <select class="form-select genre" aria-label="Default select example" @bind="pcGameToBeCreated.genre">
+                                    <option selected></option>
+                                    <option value="Simulation">Simulation</option>
+                                    <option value="Puzzle">Puzzle</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Battle royale game">Battle royale game</option>
+                                    <option value="Action-adventure game">Action-adventure game</option>
+                                    <option value="Racing">Racing</option>
+                                    <option value="Strategy">Strategy</option>
+                                    <option value="Fighting">Fighting</option>
+                                    <option value="Action">Action</option>
+                                    <option value="Sandbox">Sandbox</option>
+                                    <option value="Adventure games">Adventure games</option>
+                                    <option value="FPS">FPS</option>
+                                </select>
+                                <p>Condtion *</p>
+                                <select class="form-select Condition" aria-label="Default select example" @bind="pcGameToBeCreated.condition" required>
+                                    <option selected></option>
+                                    <option value="New">New</option>
+                                    <option value="Used as new">Used as new</option>
+                                    <option value="Used">Used</option>
+                                    <option value="Used and worn">Used and worn</option>
+                                </select>
+
+                                <div class="mb-3 Description" >
+                                    <label for="exampleInputDescription" class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="DescriptionInput" @bind="pcGameToBeCreated.description">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="formFileMultiple" class="form-label Picture">Upload Picture</label>
+                                    <input class="form-control" type="file" id="UploadPicture" multiple>
+                                </div>
+
+                                <button type="button" class="btn btn-dark" @onclick="SubmitFormPC">Submit</button>
+                        }
+                        @*ellers hvis der er valgt PS som platform*@
+                        else if (platform == "PS")
+                            {
+                    
+                                <div class="mb-3 gameTitle">
+                                    <label for="exampleInputGametitle" class="form-label">Game Title *</label>
+                                    <input type="text" class="form-control" id="GameTitleInput" @bind="psGameToBeCreated.gameName">
+                                </div>
+                                <div class="mb-3 priceTag">
+                                    <label for="exampleInputPrice" class="form-label">Price *</label>
+                                    <input type="number" class="form-control" id="PriceInput" @bind="psGameToBeCreated.price">
+                                </div>
+                                <div class="mb-3 Manufacture">
+                                    <label for="exampleInputManufacture" class="form-label">Manufacture</label>
+                                    <input type="text" class="form-control" id="ManufactureInput" @bind="psGameToBeCreated.manufacture">
+                                </div>
+                                <p>Genre</p>
+                                <select class="form-select genre" aria-label="Default select example" @bind="psGameToBeCreated.genre">
+                                    <option selected></option>
+                                    <option value="Simulation">Simulation</option>
+                                    <option value="Puzzle">Puzzle</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Battle royale game">Battle royale game</option>
+                                    <option value="Action-adventure game">Action-adventure game</option>
+                                    <option value="Racing">Racing</option>
+                                    <option value="Strategy">Strategy</option>
+                                    <option value="Fighting">Fighting</option>
+                                    <option value="Action">Action</option>
+                                    <option value="Sandbox">Sandbox</option>
+                                    <option value="Adventure games">Adventure games</option>
+                                    <option value="FPS">FPS</option>
+                                </select>
+                                <p>Condtion *</p>
+                                <select class="form-select Condition" aria-label="Default select example" @bind="psGameToBeCreated.condition">
+                                    <option selected></option>
+                                    <option value="New">New</option>
+                                    <option value="Used as new">Used as new</option>
+                                    <option value="Used">Used</option>
+                                    <option value="Used and worn">Used and worn</option>
+                                </select>
+
+                                <div class="mb-3 Description" >
+                                    <label for="exampleInputDescription" class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="DescriptionInput" @bind="psGameToBeCreated.description">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="formFileMultiple" class="form-label Picture">Upload Picture</label>
+                                    <input class="form-control" type="file" id="UploadPicture" multiple>
+                                </div>
+
+                                <button type="button" class="btn btn-dark" @onclick="SubmitFormPS">Submit</button>
+                        }
+                        @*ellers hvis der er valgt Xbox som platform*@
+                        else if (platform == "Xbox")
+                        {
+                                <div class="mb-3 gameTitle">
+                                    <label for="exampleInputGametitle" class="form-label">Game Title *</label>
+                                    <input type="GameTitle" class="form-control" id="GameTitleInput" @bind="xboxGameToBeCreated.gameName">
+                                </div>
+                                <div class="mb-3 priceTag">
+                                    <label for="exampleInputPrice" class="form-label">Price *</label>
+                                    <input type="Price" class="form-control" id="PriceInput" @bind="xboxGameToBeCreated.price">
+                                </div>
+                                <div class="mb-3 Manufacture">
+                                    <label for="exampleInputManufacture" class="form-label">Manufacture</label>
+                                    <input type="Manufacture" class="form-control" id="ManufactureInput" @bind="xboxGameToBeCreated.manufacture">
+                                </div>
+                                <p>Genre</p>
+                                <select class="form-select genre" aria-label="Default select example" @bind="xboxGameToBeCreated.genre">
+                                    <option selected></option>
+                                    <option value="Simulation">Simulation</option>
+                                    <option value="Puzzle">Puzzle</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Battle royale game">Battle royale game</option>
+                                    <option value="Action-adventure game">Action-adventure game</option>
+                                    <option value="Racing">Racing</option>
+                                    <option value="Strategy">Strategy</option>
+                                    <option value="Fighting">Fighting</option>
+                                    <option value="Action">Action</option>
+                                    <option value="Sandbox">Sandbox</option>
+                                    <option value="Adventure games">Adventure games</option>
+                                    <option value="FPS">FPS</option>
+                                </select>
+                                <p>Condtion *</p>
+                                <select class="form-select Condition" aria-label="Default select example" @bind="xboxGameToBeCreated.condition">
+                                    <option selected></option>
+                                    <option value="New">New</option>
+                                    <option value="Used as new">Used as new</option>
+                                    <option value="Used">Used</option>
+                                    <option value="Used and worn">Used and worn</option>
+                                </select>
+
+                                <div class="mb-3 Description">
+                                    <label for="exampleInputDescription" class="form-label">Description</label>
+                                    <input type="Description" class="form-control" id="DescriptionInput" @bind="xboxGameToBeCreated.description">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="formFileMultiple" class="form-label Picture">Upload Picture</label>
+                                    <input class="form-control" type="file" id="UploadPicture" multiple>
+                                </div>
+
+                                <button type="button" class="btn btn-dark" @onclick="SubmitFormXBOX">Submit</button>
+                    
+                        }
+                  </form>
+
+                    @*Når submit knappen trykkes på uanset platform*@
+                    @if (showModal == true)
+                    {
+                        <div class="modal" tabindex="-1" style="display:block;">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Succes!</h5>
+                                    
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Your game has been succesfully listed!</p>
+                                            <p>Do you wish to add one more game?</p>
+                                            <div id="buttonContainer">
+                                                <button type="button" id="Refresh" class="btn btn-dark" @onclick="Refresh">Yes</button>
+                                                <button type="button" id="Listed" class="btn btn-dark" @onclick="() => Listed(itemId)">No</button>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" @onclick="CloseModal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    }
+                </div>
+                
+            </div>
+                <div class="col">
+            
+                </div>
+        </div>
+    </div>
+}
+@*hvis man ikke er logget ind vises der at man skal logge ind først*@
+else{
+    <div class="container">
+        <div class="card">
+                <p>You need to log in, to create a new sale</p>
+            <div class="card-body">
+                <div class="btn-group">
+                    <button class="btn btn-dark loginbtn" @onclick="navlogin">Login</button>
+                    <button class="btn btn-dark registerbtn" @onclick="navregister">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    //Indhenter parameter for om Brugeren er logget ind
+    [Parameter]
+    public bool IsAuthenticated{ get; set; }
+
+    // Variabler til at gemme valgte platform og visning af modal dialog
+    string platform = "";
+    bool showModal = false;
+    int itemId;
+
+    //Objekter til at gemme oplysninger om de spil der skal oprettes
+    PC_Game pcGameToBeCreated = new PC_Game();
+    PS_Game psGameToBeCreated = new PS_Game();
+    XBOX_Game xboxGameToBeCreated = new XBOX_Game();
+
+
+    //Metoder til at sende Spillet ind til databasen alt efter platform
+    public void SubmitFormPC()
+    {
+        //Bruger metoden LoadFromLocalStorage som tjekker cokkies for om Brugeren stadig er logget ind
+        AuthenticationService.LoadFromLocalStorage();
+        // Tilføjer det oprettede PC-spil til databasen pcGameToBeCreated indeholder alle de oplysninger, der er indtastet i input felterne
+        itemId = DB.AddPCGameToDatabase(pcGameToBeCreated);
+        //Kalder på metoder der åbner modalen
+        ShowModal();
+    }
+
+    public void SubmitFormPS()
+    {
+        AuthenticationService.LoadFromLocalStorage();
+        itemId = DB.AddPSGameToDatabase(psGameToBeCreated);
+        ShowModal();
+    }
+
+    public void SubmitFormXBOX()
+    {
+        AuthenticationService.LoadFromLocalStorage();
+        itemId = DB.AddXboxGameToDatabase(xboxGameToBeCreated);
+        ShowModal();
+    }
+
+    //Åbner og lukker modal
+    void ShowModal()
+    {
+        showModal = true;
+    }
+
+    void CloseModal()
+    {
+        showModal = false;
+    }
+
+    //Metode til at Refresh siden uden at Cookies ryddes og man bliver logget ud
+    public void Refresh()
+    {
+        CloseModal();
+        NavigationManager.NavigateTo($"/SalesListing", forceLoad: true);
+    }
+
+    //Metode til at få vist seneste tilføjet Spil hvis nej knappen trykkes på
+    public void Listed(int itemId)
+    {
+        CloseModal();
+        NavigationManager.NavigateTo($"/product/{itemId}");
+    }
+
+    //Navigere til login siden
+    public void navlogin()
+    {
+        NavigationManager.NavigateTo($"/login");
+    }
+
+    //Navigere til ragister siden
+    public void navregister()
+    {
+        NavigationManager.NavigateTo($"/register");
+    }
+}

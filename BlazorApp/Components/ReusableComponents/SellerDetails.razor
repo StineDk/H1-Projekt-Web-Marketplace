@@ -1,0 +1,25 @@
+﻿<div class="sellerDetailsContainer">
+    <h5 class="sellerDetails"><b>Seller Details:</b></h5>
+   @*Gemmemgår listen af sælgere*@
+    @foreach (var sellerDetail in sellerDetails)
+    {
+            <p class="name compact-p"><b>Name: </b>@sellerDetail.name</p>
+            <p class="tel compact-p"><b>Phone Number: </b>@sellerDetail.phoneNumber</p>
+            <p class="mail compact-p"><b>Email: </b>@sellerDetail.email</p>
+    }
+</div>
+
+@code {
+   //Parameter til at hente userID
+    [Parameter]
+    public int userID { get; set; }
+
+    //En liste til at gemme selleDetails
+    public List<User> sellerDetails = new List<User>();
+
+    protected override void OnInitialized()
+    {
+        //Henter Sælger oplysningerne fra databasen ud fra UserID og gemmer i SellerDetails
+        sellerDetails = DB.GetSellerDetailsFromUsers(userID);
+    }
+}

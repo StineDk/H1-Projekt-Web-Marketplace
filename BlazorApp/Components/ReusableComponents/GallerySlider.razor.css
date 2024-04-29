@@ -1,0 +1,29 @@
+﻿.carousel {
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+
+.image {
+    border-radius: 10px;
+    max-height: 15rem;
+}
+
+.btns {
+    width: 100%;
+    margin-bottom: 2%;
+}
+
+.prevbtn {
+    cursor: pointer;
+}
+
+.nxtbtn {
+    margin-left: 6%;
+    cursor: pointer;
+}
+
+.bi:hover {
+    transform: scale(1.2);
+    transition: transform 0.3s ease-in-out;
+}
+
